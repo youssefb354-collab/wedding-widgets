@@ -45,7 +45,7 @@
 </style>
 </head>
 <body>
-<header><h1>Wedding Widget Builder</h1><p>Fill in your details once. Copy each link into Canva (<b>Apps → Embed</b>) — no code, no account needed.</p></header>
+<header><h1>Wedding Widget Builder</h1><p>Fill in your details once, then paste each link onto the matching button in your Canva website (select button → 🔗 Link). No code, no account needed.</p></header>
 <main>
   <section class="card side" aria-label="Your details">
     <h2>Your details</h2>
@@ -66,14 +66,14 @@
   </section>
 
   <section style="display:grid;gap:22px">
-    <div class="card widget"><h2>1 · Countdown <small>Embed</small></h2><div class="out"><input readonly id="o-countdown"><button class="btn" data-copy="o-countdown">Copy</button></div>
+    <div class="card widget"><h2>1 · Live countdown <small>Link the countdown boxes</small></h2><div class="out"><input readonly id="o-countdown"><button class="btn" data-copy="o-countdown">Copy</button></div>
       <div class="preview"><iframe id="p-countdown" height="230" title="Countdown preview"></iframe></div></div>
-    <div class="card widget"><h2>2 · Add to calendar <small>Embed</small></h2><div class="out"><input readonly id="o-calendar"><button class="btn" data-copy="o-calendar">Copy</button></div>
+    <div class="card widget"><h2>2 · Add to calendar <small>Link both “Add to calendar” buttons</small></h2><div class="out"><input readonly id="o-calendar"><button class="btn" data-copy="o-calendar">Copy</button></div>
       <div class="preview"><iframe id="p-calendar" height="150" title="Calendar preview"></iframe></div></div>
-    <div class="card widget"><h2>3 · RSVP for the whole household <small>Embed or button link</small></h2><div class="out"><input readonly id="o-rsvp"><button class="btn" data-copy="o-rsvp">Copy</button></div>
-      <p class="hint">Embed it in your RSVP section (make the embed box tall, ~1100 px), or link a “RSVP” button to it — it opens as a full page on phones.</p>
+    <div class="card widget"><h2>3 · RSVP for the whole household <small>Link “Reply now” + hero “RSVP”</small></h2><div class="out"><input readonly id="o-rsvp"><button class="btn" data-copy="o-rsvp">Copy</button></div>
+      <p class="hint">Guests tap your RSVP button and this form opens full-screen in your colours. Replies go straight to your Google Sheet.</p>
       <div class="preview"><iframe id="p-rsvp" height="760" title="RSVP preview"></iframe></div></div>
-    <div class="card widget"><h2>4 · Music player <small>Embed</small></h2><div class="out"><input readonly id="o-music"><button class="btn" data-copy="o-music">Copy</button></div>
+    <div class="card widget"><h2>4 · Our song <small>Link a “Play our song” button</small></h2><div class="out"><input readonly id="o-music"><button class="btn" data-copy="o-music">Copy</button></div>
       <div class="preview"><iframe id="p-music" height="110" title="Music preview" allow="autoplay"></iframe></div></div>
     <div class="card"><h2>5 · Personal invitation links <small>Optional</small></h2>
       <p class="hint">One line per household: <b>Name on invitation; max guests; names separated by |</b>. Each gets a personal RSVP link (names pre-filled) + QR code.</p>
@@ -81,10 +81,12 @@
 Grandma Rose; 1; Rose Martin</textarea>
       <div style="display:flex;gap:8px;margin:12px 0"><button class="btn" id="mk">Create links</button><button class="btn ghost" id="csv">Download CSV</button></div>
       <table id="links" hidden><thead><tr><th>Household</th><th>Personal RSVP link</th><th>QR</th></tr></thead><tbody></tbody></table></div>
-    <div class="card"><h2>How to add a widget in Canva</h2><ol class="steps">
-      <li>Open your wedding website design in Canva.</li><li>Click <b>Apps</b> → search <b>Embeds</b> → paste the copied link → <b>Add to design</b>.</li>
-      <li>Resize the box to fit the preview above (countdown ~230 px tall, calendar ~150 px, RSVP ~1100 px, music ~110 px).</li>
-      <li><b>Publish</b> your website — the widgets are live and interactive.</li></ol></div>
+    <div class="card"><h2>How to connect a link in Canva</h2><ol class="steps">
+      <li>Open your wedding website in Canva and click the button you want to connect (<b>Reply now</b>, <b>Add to calendar</b>, the countdown boxes, or any button you add for music).</li>
+      <li>Click the <b>link icon</b> 🔗 in the top toolbar (or right-click → <b>Link</b>), paste the copied link, press <b>Enter</b>.</li>
+      <li>Repeat for every button with the same job (for example, both <b>Add to calendar</b> buttons).</li>
+      <li><b>Publish</b> your website. Guests tap the button and the RSVP form, calendar, live countdown or music opens in your colours.</li></ol>
+      <p style="margin:10px 0 0;color:var(--soft);font-size:14px">Full illustrated guide: <a href="guide.html">guide.html</a></p></div>
   </section>
 </main>
 <script>
@@ -100,7 +102,7 @@ Grandma Rose; 1; Rose Martin</textarea>
   const here = Intl.DateTimeFormat().resolvedOptions().timeZone;
   tzs.forEach((z) => { const o = document.createElement("option"); o.value = o.textContent = z; if (z === "Europe/Paris") o.selected = true; $("tz").appendChild(o); });
   const url = (page, p) => { const u = new URL(BASE + page); Object.entries(p).forEach(([k, v]) => { if (v !== "" && v != null && v !== false) u.searchParams.set(k, v); }); return u.toString(); };
-  function common() { return { theme, lang: $("lang").value }; }
+  function common() { return { theme, lang: $("lang").value, bg: "solid", couple: `${$("n1").value} & ${$("n2").value}` }; }
   function rsvpParams(extra = {}) {
     return { ...common(), api: $("api").value.trim(), meals: $("meals").value.split("|").map((s) => s.trim()).filter(Boolean).join("|"), max: $("max").value,
       deadline: $("deadline").value, tz: $("tz").value, contact: $("contact").value.trim(), shuttle: $("shuttle").checked ? 1 : "", song: $("song").checked ? 1 : "", phone: $("phone").checked ? 1 : "", ...extra };

@@ -16,7 +16,7 @@
   @keyframes eq { 50% { height: 100%; } }
   [data-look="icon"] .player { padding: 0; border: 0; background: none; } [data-look="icon"] .meta, [data-look="icon"] .bars { display: none; }
 </style></head>
-<body><div class="player" id="p"><button class="play" id="b" aria-label="Play music"></button><div class="meta"><b id="ti"></b><small id="st"></small></div><div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+<body data-frame="music"><div class="player" id="p"><button class="play" id="b" aria-label="Play music"></button><div class="meta"><b id="ti"></b><small id="st"></small></div><div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
 <audio id="a" loop preload="none"></audio>
 <script>
   const { P, t } = W;

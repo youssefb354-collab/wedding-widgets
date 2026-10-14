@@ -21,12 +21,37 @@
   if (css.length) { const s = document.createElement("style"); s.textContent = `:root,[data-theme]{${css.join(";")}}`; document.head.appendChild(s); }
   const bg = P.get("bg"); // transparent (default) | solid | card | hex
   document.addEventListener("DOMContentLoaded", () => {
-    if (bg === "solid") document.body.classList.add("solid");
+    let topLevel = true; try { topLevel = window.self === window.top; } catch (e) { topLevel = false; }
+    if (bg === "solid" || (!bg && topLevel)) { document.body.classList.add("solid"); frame(); }
     else if (bg === "card") document.body.classList.add("card-bg");
     else if (bg && /^[0-9a-f]{3,8}$/i.test(bg)) document.body.style.background = "#" + bg;
   });
 
   const lang = (P.get("lang") || "en").slice(0, 2);
+
+  // Full-page mode (opened from a button on the Canva website): couple names on top, "back" link below
+  const FRAME = {
+    countdown: { en: "Counting down to our wedding", fr: "Compte à rebours jusqu’au grand jour", es: "Cuenta atrás para nuestra boda", de: "Countdown bis zu unserer Hochzeit", it: "Il conto alla rovescia per le nostre nozze" },
+    calendar: { en: "", fr: "", es: "", de: "", it: "" },
+    music: { en: "Our song", fr: "Notre chanson", es: "Nuestra canción", de: "Unser Lied", it: "La nostra canzone" },
+    rsvp: { en: "", fr: "", es: "", de: "", it: "" },
+    back: { en: "Back to our website", fr: "Retour au site", es: "Volver a la web", de: "Zurück zur Website", it: "Torna al sito" },
+  };
+  function frame() {
+    const b = document.body, kind = b.dataset.frame; if (!kind || kind === "off") return;
+    const couple = (P.get("couple") || P.get("title") || "").replace(/\s+[—–-]\s+.*$/, "").trim();
+    const kick = (FRAME[kind] || {})[lang] ?? (FRAME[kind] || {}).en ?? "";
+    const inner = document.createElement("div"); inner.className = "pg-body";
+    while (b.firstChild) inner.appendChild(b.firstChild);
+    const head = document.createElement("header"); head.className = "pg-head";
+    head.innerHTML = (couple ? `<div class="pg-couple">${esc(couple)}</div>` : "") + (kick ? `<div class="pg-kicker">${esc(kick)}</div>` : "");
+    const back = document.createElement("a"); back.className = "pg-back"; back.href = document.referrer || "#";
+    back.textContent = "← " + (FRAME.back[lang] || FRAME.back.en);
+    back.addEventListener("click", (e) => { if (history.length > 1) { e.preventDefault(); history.back(); } else if (!document.referrer) { e.preventDefault(); window.close(); } });
+    if (head.innerHTML) b.appendChild(head);
+    b.appendChild(inner); b.appendChild(back);
+    b.classList.add("framed");
+  }
   document.documentElement.lang = lang;
 
   function tzOffset(date, tz) {

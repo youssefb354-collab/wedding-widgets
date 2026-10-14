@@ -22,3 +22,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .toast.show { transform: translate(-50%, 0); visibility: visible; }
 .err-box { font: 14px/1.5 Arial, sans-serif; color: #8a1c1c; background: #fff3f3; border: 1px solid #f1c4c4; padding: 12px 14px; border-radius: 10px; margin: 10px; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* Full-page mode (bg=solid): page opened from a button on the Canva website */
+body.framed { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 48px 18px 40px; }
+.pg-body { width: min(100%, 760px); }
+.pg-head { text-align: center; }
+.pg-couple { font-family: var(--fs); font-weight: 400; font-size: clamp(46px, 11vw, 78px); line-height: 1.05; color: var(--accent); }
+.pg-kicker { margin-top: 10px; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--soft); }
+.pg-kicker::before, .pg-kicker::after { content: ""; display: inline-block; width: 28px; height: 1px; background: var(--line); vertical-align: middle; margin: 0 12px; }
+.pg-back { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--soft); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 3px; }
+.pg-back:hover { color: var(--ink); border-color: var(--accent); }
+body[data-frame="music"] .pg-body, body[data-frame="calendar"] .pg-body { display: flex; justify-content: center; }
+@media (max-width: 480px) { .pg-kicker { letter-spacing: .2em; } .pg-kicker::before, .pg-kicker::after { width: 16px; margin: 0 8px; } }

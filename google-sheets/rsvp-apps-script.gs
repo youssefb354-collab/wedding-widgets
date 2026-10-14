@@ -9,7 +9,8 @@
  *  5. Click Deploy → New deployment → type "Web app"
  *       Execute as: Me      Who has access: Anyone
  *     → Deploy → copy the "Web app URL".
- *  6. Paste that URL in site-config.js →  rsvp.googleSheetUrl: "PASTE-HERE"
+ *  6. Canva template: paste that URL in the builder (builder.html → "Google Sheet RSVP link").
+ *     HTML template: paste it in site-config.js →  rsvp.googleSheetUrl: "PASTE-HERE"
  *  Done. Every reply appears as new rows (one row per guest) + the Summary tab updates itself.
  */
 
