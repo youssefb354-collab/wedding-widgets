@@ -1,0 +1,19 @@
+All demo photos are CC0 (public domain dedication) from StockSnap.io, found via Openverse.
+Free for commercial use, no attribution required. Buyers should replace them with their own photos.
+
+hero.jpg: https://cdn.stocksnap.io/img-thumbs/960w/JB4CPU0LCU.jpg (CC0, StockSnap via Openverse)
+hero-bordeaux.jpg: https://cdn.stocksnap.io/img-thumbs/960w/JQYJR3DCYX.jpg (CC0, StockSnap via Openverse)
+hero-terracotta.jpg: https://cdn.stocksnap.io/img-thumbs/960w/M2PEE4SOEZ.jpg (CC0, StockSnap via Openverse)
+hero-midnight.jpg: https://cdn.stocksnap.io/img-thumbs/960w/6QXTZFW51U.jpg (CC0, StockSnap via Openverse)
+hero-dustyblue.jpg: https://cdn.stocksnap.io/img-thumbs/960w/FATP4EKLSE.jpg (CC0, StockSnap via Openverse)
+story-1.jpg: https://cdn.stocksnap.io/img-thumbs/960w/AAM8X0DRXY.jpg (CC0, StockSnap via Openverse)
+story-2.jpg: https://cdn.stocksnap.io/img-thumbs/960w/RT83POZ2BQ.jpg (CC0, StockSnap via Openverse)
+story-3.jpg: https://cdn.stocksnap.io/img-thumbs/960w/TMKU5IU3T0.jpg (CC0, StockSnap via Openverse)
+venue.jpg: https://cdn.stocksnap.io/img-thumbs/960w/5K1C2ZXZZP.jpg (CC0, StockSnap via Openverse)
+gallery-1.jpg: https://cdn.stocksnap.io/img-thumbs/960w/2BJEGE3LJ4.jpg (CC0, StockSnap via Openverse)
+gallery-2.jpg: https://cdn.stocksnap.io/img-thumbs/960w/3S3LT750NH.jpg (CC0, StockSnap via Openverse)
+gallery-3.jpg: https://cdn.stocksnap.io/img-thumbs/960w/KXCXWFPPXT.jpg (CC0, StockSnap via Openverse)
+gallery-4.jpg: https://cdn.stocksnap.io/img-thumbs/960w/MLZK9UI7Y7.jpg (CC0, StockSnap via Openverse)
+gallery-5.jpg: https://cdn.stocksnap.io/img-thumbs/960w/J3W0HHWGDV.jpg (CC0, StockSnap via Openverse)
+gallery-6.jpg: https://cdn.stocksnap.io/img-thumbs/960w/8YPB812NX6.jpg (CC0, StockSnap via Openverse)
+hero-oldmoney.jpg: https://cdn.stocksnap.io/img-thumbs/960w/AHMW06F5B5.jpg (CC0, StockSnap via Openverse)

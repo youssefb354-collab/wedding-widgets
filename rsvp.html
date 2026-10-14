@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSVP</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="w.css"><script src="w.js"></script>
+<style>
+  body { padding: clamp(10px, 3vw, 24px); font-size: 16.5px; line-height: 1.6; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .head { text-align: center; margin-bottom: 18px; }
+  .head .script { font-family: var(--fs); color: var(--accent); font-size: clamp(46px, 10vw, 76px); line-height: 1; }
+  .head p { font-family: var(--fi); font-style: italic; font-size: 19px; color: var(--soft); margin: 6px 0 0; }
+  .greet { font-family: var(--fi); font-style: italic; font-size: 21px; text-align: center; margin: 0 0 8px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label, .legend { font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--soft); font-weight: 600; }
+  input, select, textarea { text-transform: none; letter-spacing: normal; font-weight: 400; color: var(--ink); width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); font-size: 16px; }
+  textarea { min-height: 96px; resize: vertical; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .err { color: #B3261E; font-size: 14px; display: none; } [data-theme="midnight"] .err { color: #FFB4AB; }
+  .invalid .err { display: block; } .invalid input, .invalid select { border-color: #B3261E; }
+  .grid-2 { display: grid; gap: 0 14px; } @media (min-width: 560px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+  .guest { border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; background: color-mix(in srgb, var(--surface) 70%, transparent); }
+  .guest-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .guest-head strong { font-family: var(--fd); font-weight: 500; font-size: 20px; }
+  .rm { border: 0; background: none; color: var(--soft); text-decoration: underline; cursor: pointer; min-height: 44px; }
+  .pills { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .pill { position: relative; display: block; }
+  .pill input { position: absolute; opacity: 0; width: 1px; height: 1px; min-height: 0; padding: 0; }
+  .pill span { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 50px; padding: 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: 15px; line-height: 1.3; }
+  .pill input:checked + span { background: var(--btn); color: var(--btnInk); border-color: var(--btn); }
+  .pill input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .add { width: 100%; border: 1px dashed var(--accent); background: transparent; border-radius: 14px; min-height: 52px; color: var(--accent); cursor: pointer; letter-spacing: .1em; text-transform: uppercase; font-size: 14px; margin: 2px 0 18px; }
+  .actions { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 8px; }
+  .actions .btn { width: 100%; max-width: 340px; }
+  .note { font-size: 13.5px; color: var(--soft); text-align: center; margin: 0; }
+  .done { text-align: center; padding: 10px 0 20px; }
+  .done .script { font-family: var(--fs); color: var(--accent); font-size: clamp(50px, 11vw, 80px); line-height: 1; }
+  .sum { text-align: left; background: color-mix(in srgb, var(--surface) 80%, transparent); border: 1px solid var(--line); border-radius: 14px; padding: 14px 20px; margin: 18px auto; max-width: 460px; }
+  .already { text-align: center; background: color-mix(in srgb, var(--accent) 10%, transparent); border-radius: 12px; padding: 12px 16px; font-size: 15px; margin-bottom: 16px; }
+</style></head>
+<body><div class="wrap" id="w"></div>
+<script>
+  const { P, zoned, esc, t, toast } = W;
+  const L = t({
+    en: { title: "RSVP", dear: "Dear", kindly: "Kindly reply by", household: "Household / party name", email: "Email", phone: "Phone (optional)", guest: "Guest", name: "Full name",
+      yes: "Joyfully accepts", no: "Regretfully declines", meal: "Meal choice", choose: "Choose a meal", diet: "Allergies / dietary needs", add: "+ Add another guest", rm: "Remove",
+      shuttle: "Will you use the shuttle?", y: "Yes", n: "No", song: "A song that will get you dancing", msg: "A note for the couple", send: "Send RSVP", sending: "Sending…",
+      req: "Please fill this in", mail: "Please enter a valid email", pick: "Please choose one", pickMeal: "Please choose a meal", thanks: "Thank you!",
+      tyes: "We can’t wait to celebrate with you.", tno: "We’ll miss you — thank you for letting us know.", your: "Your reply", att: "attending", natt: "not attending",
+      again: "Send another reply", already: "You already replied on", edit: "Need to change something? Just send the form again — we’ll use your latest reply.",
+      closed: "RSVPs are now closed.", contact: "Please contact us at", demo: "Demo mode — replies are saved in this browser only (add your Google Sheet link to go live).", net: "We couldn’t send your reply. Please check your connection and try again." },
+    fr: { title: "Réponse", dear: "Chère", kindly: "Merci de répondre avant le", household: "Nom de la famille / du groupe", email: "E-mail", phone: "Téléphone (facultatif)", guest: "Invité", name: "Nom complet",
+      yes: "Accepte avec joie", no: "Décline avec regret", meal: "Choix du menu", choose: "Choisissez un menu", diet: "Allergies / régime", add: "+ Ajouter un invité", rm: "Retirer",
+      shuttle: "Prendrez-vous la navette ?", y: "Oui", n: "Non", song: "Une chanson qui vous fera danser", msg: "Un mot pour les mariés", send: "Envoyer", sending: "Envoi…",
+      req: "Merci de remplir ce champ", mail: "Adresse e-mail invalide", pick: "Merci de choisir", pickMeal: "Merci de choisir un menu", thanks: "Merci !",
+      tyes: "Nous avons hâte de fêter ce jour avec vous.", tno: "Vous nous manquerez — merci de nous avoir prévenus.", your: "Votre réponse", att: "présent(e)", natt: "absent(e)",
+      again: "Envoyer une autre réponse", already: "Vous avez déjà répondu le", edit: "Un changement ? Renvoyez le formulaire — nous garderons votre dernière réponse.",
+      closed: "Les réponses sont closes.", contact: "Contactez-nous à", demo: "Mode démo — réponses enregistrées dans ce navigateur uniquement.", net: "Envoi impossible. Vérifiez votre connexion et réessayez." },
+  });
+  const api = P.get("api") || ""; const max = Math.max(1, Math.min(+(P.get("guests") || P.get("max") || 6), 20));
+  const meals = (P.get("meals") || "").split("|").map((s) => s.trim()).filter(Boolean);
+  const names = (P.get("names") || "").split("|").map((s) => s.trim()).filter(Boolean);
+  const to = P.get("to") || ""; const locked = !!P.get("guests");
+  const deadline = P.get("deadline") ? zoned(P.get("deadline") + (P.get("deadline").includes("T") ? "" : "T23:59"), P.get("tz")) : null;
+  const key = "rsvp-" + (api || "demo");
+  const box = document.getElementById("w");
+  const fmtDate = (d) => new Intl.DateTimeFormat(document.documentElement.lang, { dateStyle: "long", timeZone: P.get("tz") || undefined }).format(d);
+
+  function guestHTML(i, name = "") {
+    return `<fieldset class="guest" style="border-width:1px"><legend class="sr-only">${L.guest} ${i + 1}</legend>
+      <div class="guest-head"><strong>${L.guest} ${i + 1}</strong>${i > 0 && !locked ? `<button type="button" class="rm">${L.rm}</button>` : ""}</div>
+      <div class="field"><label>${L.name}<input name="gname" value="${esc(name)}" autocomplete="${i ? "off" : "name"}"></label><span class="err">${L.req}</span></div>
+      <div class="pills" role="radiogroup"><label class="pill"><input type="radio" name="att${i}" value="yes"><span>${L.yes}</span></label><label class="pill"><input type="radio" name="att${i}" value="no"><span>${L.no}</span></label></div>
+      <div class="field att"><span class="err">${L.pick}</span></div>
+      <div class="grid-2 ifyes" hidden>${meals.length ? `<div class="field"><label>${L.meal}<select name="meal"><option value="">${L.choose}</option>${meals.map((m) => `<option>${esc(m)}</option>`).join("")}</select></label><span class="err">${L.pickMeal}</span></div>` : ""}
+        <div class="field"><label>${L.diet}<input name="diet"></label></div></div></fieldset>`;
+  }
+  let gi = 0;
+  function render() {
+    if (deadline && Date.now() > deadline.getTime()) { box.innerHTML = `<div class="head"><div class="script">${esc(P.get("title") || L.title)}</div></div><p class="note" style="font-size:17px">${L.closed} ${P.get("contact") ? `${L.contact} <a href="mailto:${esc(P.get("contact"))}">${esc(P.get("contact"))}</a>` : ""}</p>`; return; }
+    let prev = null; try { prev = JSON.parse(localStorage.getItem(key) || "null"); } catch (e) {}
+    const start = Math.max(1, Math.min(names.length || 1, max)); gi = start;
+    box.innerHTML = `${P.get("heading") !== "0" ? `<div class="head">${to ? `<p class="greet">${L.dear} ${esc(to)},</p>` : ""}<div class="script">${esc(P.get("title") || L.title)}</div>${deadline ? `<p>${L.kindly} ${fmtDate(deadline)}</p>` : ""}</div>` : ""}
+      ${prev ? `<div class="already">${L.already} ${fmtDate(new Date(prev.submittedAt))}. ${L.edit}</div>` : ""}
+      <form id="f" novalidate>
+        <div class="grid-2"><div class="field"><label>${L.household}<input name="household" value="${esc(to)}" autocomplete="family-name"></label><span class="err">${L.req}</span></div>
+        <div class="field"><label>${L.email}<input name="email" type="email" inputmode="email" autocomplete="email"></label><span class="err">${L.mail}</span></div></div>
+        <div id="g">${Array.from({ length: start }, (_, i) => guestHTML(i, names[i] || "")).join("")}</div>
+        <button type="button" class="add" id="add" ${start >= max ? "hidden" : ""}>${L.add}</button>
+        ${P.get("shuttle") === "1" ? `<div class="field"><span class="legend">${L.shuttle}</span><div class="pills"><label class="pill"><input type="radio" name="shuttle" value="yes"><span>${L.y}</span></label><label class="pill"><input type="radio" name="shuttle" value="no"><span>${L.n}</span></label></div></div>` : ""}
+        ${P.get("song") === "1" ? `<div class="field"><label>${L.song}<input name="song"></label></div>` : ""}
+        ${P.get("phone") === "1" ? `<div class="field"><label>${L.phone}<input name="phone" type="tel" inputmode="tel" autocomplete="tel"></label></div>` : ""}
+        <div class="field"><label>${L.msg}<textarea name="message"></textarea></label></div>
+        <div class="actions"><button class="btn" type="submit" id="send">${L.send}</button>${!api ? `<p class="note">${L.demo}</p>` : ""}</div>
+      </form>`;
+    wire();
+  }
+  function renumber() { [...document.querySelectorAll(".guest")].forEach((fs, i) => fs.querySelector(".guest-head strong").textContent = `${L.guest} ${i + 1}`); document.getElementById("add").hidden = document.querySelectorAll(".guest").length >= max; }
+  function wire() {
+    const f = document.getElementById("f"), g = document.getElementById("g");
+    g.addEventListener("change", (e) => { const fs = e.target.closest(".guest"); if (!fs) return; const yes = fs.querySelector('input[value="yes"]').checked; fs.querySelector(".ifyes").hidden = !yes; fs.querySelector(".att").classList.remove("invalid"); });
+    g.addEventListener("click", (e) => { if (e.target.closest(".rm")) { e.target.closest(".guest").remove(); renumber(); } });
+    document.getElementById("add").addEventListener("click", () => { const d = document.createElement("div"); d.innerHTML = guestHTML(gi++); const fs = d.firstElementChild;
+      if (!fs.querySelector(".rm")) fs.querySelector(".guest-head").insertAdjacentHTML("beforeend", `<button type="button" class="rm">${L.rm}</button>`); g.appendChild(fs); renumber(); fs.querySelector("input").focus(); });
+    f.addEventListener("input", (e) => e.target.closest(".field")?.classList.remove("invalid"));
+    f.addEventListener("submit", submit);
+  }
+  function validate(f) {
+    let ok = true; const bad = (el) => { el.closest(".field").classList.add("invalid"); if (ok) el.focus(); ok = false; };
+    if (!f.household.value.trim()) bad(f.household);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.value.trim())) bad(f.email);
+    document.querySelectorAll(".guest").forEach((fs) => { const n = fs.querySelector('[name="gname"]'); if (!n.value.trim()) bad(n);
+      const a = fs.querySelector("input[type=radio]:checked"); if (!a) { fs.querySelector(".att").classList.add("invalid"); ok = false; }
+      if (a?.value === "yes" && meals.length) { const m = fs.querySelector("select"); if (!m.value) bad(m); } });
+    return ok;
+  }
+  async function submit(e) {
+    e.preventDefault(); const f = e.currentTarget; if (!validate(f)) return;
+    const v = (n) => (f.elements[n]?.value || "").trim();
+    const data = { submittedAt: new Date().toISOString(), lang: document.documentElement.lang, invitedAs: to, household: v("household"), email: v("email"), phone: v("phone"),
+      shuttle: f.querySelector('input[name="shuttle"]:checked')?.value || "", song: v("song"), message: v("message"),
+      guests: [...document.querySelectorAll(".guest")].map((fs) => ({ name: fs.querySelector('[name="gname"]').value.trim(), attending: fs.querySelector("input[type=radio]:checked")?.value === "yes" ? "yes" : "no", meal: fs.querySelector("select")?.value || "", dietary: fs.querySelector('[name="diet"]')?.value.trim() || "" })) };
+    const b = document.getElementById("send"); b.disabled = true; b.textContent = L.sending;
+    try {
+      if (api) await fetch(api, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) });
+      else { const all = JSON.parse(localStorage.getItem("rsvp-demo-all") || "[]"); all.push(data); localStorage.setItem("rsvp-demo-all", JSON.stringify(all)); await new Promise((r) => setTimeout(r, 400)); }
+      try { localStorage.setItem(key, JSON.stringify(data)); } catch (e2) {}
+      done(data);
+    } catch (err) { b.disabled = false; b.textContent = L.send; toast(L.net); }
+  }
+  function done(d) {
+    const yes = d.guests.some((g) => g.attending === "yes");
+    box.innerHTML = `<div class="done" tabindex="-1" id="dn"><div class="script">${L.thanks}</div><p style="font-size:18px">${yes ? L.tyes : L.tno}</p>
+      <div class="sum"><strong>${L.your} — ${esc(d.household)}</strong><ul>${d.guests.map((g) => `<li>${esc(g.name)}: ${g.attending === "yes" ? L.att : L.natt}${g.meal ? " · " + esc(g.meal) : ""}</li>`).join("")}</ul></div>
+      <button class="btn ghost" type="button" id="again">${L.again}</button></div>`;
+    document.getElementById("dn").focus(); document.getElementById("again").addEventListener("click", render);
+    try { parent.postMessage({ type: "wedding-rsvp-done" }, "*"); } catch (e) {}
+  }
+  render();
+</script></body></html>

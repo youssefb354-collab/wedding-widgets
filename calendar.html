@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add to Calendar</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="w.css"><script src="w.js"></script>
+<style>
+  body { min-height: 100vh; display: grid; place-items: center; padding: 10px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .label { width: 100%; text-align: center; font-size: 12.5px; letter-spacing: .24em; text-transform: uppercase; color: var(--soft); margin: 0 0 4px; }
+  @media (max-width: 420px) { .row .btn { flex: 1 1 100%; } }
+</style></head>
+<body><div class="row" id="w"></div>
+<script>
+  const { P, zoned, esc, t, fail, ICS } = W;
+  const L = t({ en: { save: "Save the date", g: "Google", a: "Apple / iPhone", o: "Outlook", dl: "Calendar file downloaded" },
+                fr: { save: "Réservez la date", g: "Google", a: "Apple / iPhone", o: "Outlook", dl: "Fichier calendrier téléchargé" },
+                es: { save: "Reserva la fecha", g: "Google", a: "Apple / iPhone", o: "Outlook", dl: "Archivo descargado" },
+                de: { save: "Termin speichern", g: "Google", a: "Apple / iPhone", o: "Outlook", dl: "Kalenderdatei geladen" },
+                it: { save: "Salva la data", g: "Google", a: "Apple / iPhone", o: "Outlook", dl: "File scaricato" } });
+  const tz = P.get("tz"); const s = zoned(P.get("start") || P.get("date"), tz);
+  const e = P.get("end") ? zoned(P.get("end"), tz) : (s ? new Date(s.getTime() + 8 * 36e5) : null);
+  const title = P.get("title") || "Our Wedding"; const loc = P.get("loc") || ""; const det = P.get("details") || "";
+  const ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  if (!s || isNaN(s)) fail("Add your date to the link, e.g. ?start=2027-06-12T16:00&tz=Europe/Paris&title=Amelia%20%26%20James");
+  else {
+    const g = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${ICS(s)}/${ICS(e)}&details=${encodeURIComponent(det)}&location=${encodeURIComponent(loc)}`;
+    const o = `https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&rru=addevent&subject=${encodeURIComponent(title)}&startdt=${s.toISOString()}&enddt=${e.toISOString()}&location=${encodeURIComponent(loc)}&body=${encodeURIComponent(det)}`;
+    const ghost = P.get("variant") === "ghost" ? " ghost" : "";
+    document.getElementById("w").innerHTML = `${P.get("label") !== "0" ? `<p class="label">${esc(P.get("label") || L.save)}</p>` : ""}
+      <a class="btn${ghost}" href="${g}" target="_blank" rel="noopener">${ICO}${L.g}</a>
+      <a class="btn ghost" href="#" id="ics">${ICO}${L.a}</a>
+      <a class="btn ghost" href="${o}" target="_blank" rel="noopener">${ICO}${L.o}</a>`;
+    document.getElementById("ics").addEventListener("click", (ev) => {
+      ev.preventDefault();
+      const txt = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Wedding Widgets//EN", "BEGIN:VEVENT", `UID:${ICS(s)}-${title.replace(/\W/g, "")}@wedding`, `DTSTAMP:${ICS(new Date())}`,
+        `DTSTART:${ICS(s)}`, `DTEND:${ICS(e)}`, `SUMMARY:${title}`, `LOCATION:${loc.replace(/,/g, "\\,")}`, `DESCRIPTION:${det}`,
+        "BEGIN:VALARM", "TRIGGER:-P1D", "ACTION:DISPLAY", "DESCRIPTION:Reminder", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "text/calendar;charset=utf-8" }));
+      a.download = title.replace(/\W+/g, "-") + ".ics"; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 300); W.toast(L.dl);
+    });
+  }
+</script></body></html>

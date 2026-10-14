@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wedding Widget Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400&family=Jost:wght@400;500;600&display=swap">
+<script src="vendor/qrcode.min.js"></script>
+<style>
+  :root { --bg:#F5F1EA; --ink:#2B2724; --soft:#6F655C; --line:#DCD3C6; --btn:#2B2724; --card:#fff; --ok:#3F6B45; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 Jost, Arial, sans-serif; }
+  header { text-align: center; padding: 36px 18px 8px; }
+  h1 { font-family: "Cormorant Garamond", serif; font-weight: 500; font-size: clamp(32px, 5vw, 48px); margin: 0; }
+  header p { color: var(--soft); margin: 6px auto 0; max-width: 640px; }
+  main { max-width: 1180px; margin: 0 auto; padding: 18px; display: grid; gap: 22px; }
+  @media (min-width: 1000px) { main { grid-template-columns: 420px 1fr; align-items: start; } .side { position: sticky; top: 12px; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  h2 { font-family: "Cormorant Garamond", serif; font-weight: 500; font-size: 26px; margin: 0 0 4px; }
+  h2 small { font-family: Jost; font-size: 13px; color: var(--soft); letter-spacing: .1em; text-transform: uppercase; margin-left: 6px; }
+  label { display: block; font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); font-weight: 600; margin: 14px 0 5px; }
+  input, select, textarea { width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font: inherit; background: #fff; }
+  textarea { min-height: 120px; font-family: ui-monospace, Menlo, monospace; font-size: 14px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 10px; }
+  .checks label { display: flex; gap: 8px; align-items: center; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink); margin: 0; font-size: 15px; }
+  .checks input { width: 20px; min-height: 20px; }
+  .themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .themes button { border: 2px solid var(--line); background: #fff; border-radius: 12px; padding: 10px 6px; cursor: pointer; font: 500 13px Jost; display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 44px; }
+  .themes button[aria-pressed="true"] { border-color: var(--ink); }
+  .themes i { display: flex; } .themes i b { width: 16px; height: 16px; border-radius: 50%; margin: 0 -2px; border: 2px solid #fff; }
+  .hint { font-size: 14px; color: var(--soft); margin: 6px 0 0; }
+  .widget { display: grid; gap: 12px; }
+  .out { display: flex; gap: 8px; }
+  .out input { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; background: #FAF8F4; }
+  .btn { border: 0; background: var(--btn); color: #fff; border-radius: 999px; padding: 10px 18px; min-height: 44px; font: 600 13px Jost; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .preview { border: 1px dashed var(--line); border-radius: 12px; overflow: hidden; background: repeating-conic-gradient(#f3efe8 0 25%, #fff 0 50%) 0 0/18px 18px; }
+  .preview iframe { width: 100%; border: 0; display: block; }
+  .steps { margin: 0; padding-left: 20px; color: var(--soft); font-size: 15px; }
+  .steps b { color: var(--ink); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; } td, th { border-bottom: 1px solid var(--line); padding: 8px 6px; text-align: left; vertical-align: top; }
+  td .l { word-break: break-all; font-size: 12px; color: var(--soft); } .qr { width: 84px; }
+  .copied { color: var(--ok); font-size: 13px; }
+</style>
+</head>
+<body>
+<header><h1>Wedding Widget Builder</h1><p>Fill in your details once. Copy each link into Canva (<b>Apps → Embed</b>) — no code, no account needed.</p></header>
+<main>
+  <section class="card side" aria-label="Your details">
+    <h2>Your details</h2>
+    <label>Design</label><div class="themes" id="themes"></div>
+    <div class="row"><div><label for="n1">Name 1</label><input id="n1" value="Amelia"></div><div><label for="n2">Name 2</label><input id="n2" value="James"></div></div>
+    <div class="row"><div><label for="date">Wedding date</label><input id="date" type="date" value="2027-06-12"></div><div><label for="time">Ceremony time</label><input id="time" type="time" value="16:00"></div></div>
+    <label for="tz">Time zone of the wedding</label><select id="tz"></select>
+    <label for="loc">Venue name & address</label><input id="loc" value="Domaine des Oliviers, Aix-en-Provence, France">
+    <label for="lang">Language</label><select id="lang"><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="it">Italiano</option></select>
+    <label for="api">Google Sheet RSVP link <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional — see guide)</span></label><input id="api" placeholder="https://script.google.com/macros/s/…/exec">
+    <p class="hint">Leave empty to test. RSVPs then stay in your browser only.</p>
+    <label for="meals">Meal choices (separate with |)</label><input id="meals" value="Lamb | Sea bass | Vegetarian">
+    <div class="row"><div><label for="max">Max guests per reply</label><input id="max" type="number" min="1" max="20" value="6"></div><div><label for="deadline">RSVP deadline</label><input id="deadline" type="date" value="2027-04-01"></div></div>
+    <label for="contact">Contact email</label><input id="contact" value="hello@ameliaandjames.com">
+    <div class="checks"><label><input type="checkbox" id="shuttle" checked> Ask about shuttle</label><label><input type="checkbox" id="song" checked> Song request</label><label><input type="checkbox" id="phone"> Ask phone</label></div>
+    <label for="music">Music</label><select id="music"><option value="romance">Romantic piano (included)</option><option value="custom">My own song (mp3 link)</option></select>
+    <input id="musicsrc" placeholder="https://…/our-song.mp3" hidden style="margin-top:8px">
+  </section>
+
+  <section style="display:grid;gap:22px">
+    <div class="card widget"><h2>1 · Countdown <small>Embed</small></h2><div class="out"><input readonly id="o-countdown"><button class="btn" data-copy="o-countdown">Copy</button></div>
+      <div class="preview"><iframe id="p-countdown" height="230" title="Countdown preview"></iframe></div></div>
+    <div class="card widget"><h2>2 · Add to calendar <small>Embed</small></h2><div class="out"><input readonly id="o-calendar"><button class="btn" data-copy="o-calendar">Copy</button></div>
+      <div class="preview"><iframe id="p-calendar" height="150" title="Calendar preview"></iframe></div></div>
+    <div class="card widget"><h2>3 · RSVP for the whole household <small>Embed or button link</small></h2><div class="out"><input readonly id="o-rsvp"><button class="btn" data-copy="o-rsvp">Copy</button></div>
+      <p class="hint">Embed it in your RSVP section (make the embed box tall, ~1100 px), or link a “RSVP” button to it — it opens as a full page on phones.</p>
+      <div class="preview"><iframe id="p-rsvp" height="760" title="RSVP preview"></iframe></div></div>
+    <div class="card widget"><h2>4 · Music player <small>Embed</small></h2><div class="out"><input readonly id="o-music"><button class="btn" data-copy="o-music">Copy</button></div>
+      <div class="preview"><iframe id="p-music" height="110" title="Music preview" allow="autoplay"></iframe></div></div>
+    <div class="card"><h2>5 · Personal invitation links <small>Optional</small></h2>
+      <p class="hint">One line per household: <b>Name on invitation; max guests; names separated by |</b>. Each gets a personal RSVP link (names pre-filled) + QR code.</p>
+      <textarea id="list">The Smith Family; 4; John Smith | Jane Smith | Lily Smith | Tom Smith
+Grandma Rose; 1; Rose Martin</textarea>
+      <div style="display:flex;gap:8px;margin:12px 0"><button class="btn" id="mk">Create links</button><button class="btn ghost" id="csv">Download CSV</button></div>
+      <table id="links" hidden><thead><tr><th>Household</th><th>Personal RSVP link</th><th>QR</th></tr></thead><tbody></tbody></table></div>
+    <div class="card"><h2>How to add a widget in Canva</h2><ol class="steps">
+      <li>Open your wedding website design in Canva.</li><li>Click <b>Apps</b> → search <b>Embeds</b> → paste the copied link → <b>Add to design</b>.</li>
+      <li>Resize the box to fit the preview above (countdown ~230 px tall, calendar ~150 px, RSVP ~1100 px, music ~110 px).</li>
+      <li><b>Publish</b> your website — the widgets are live and interactive.</li></ol></div>
+  </section>
+</main>
+<script>
+  const BASE = location.href.replace(/builder\.html.*$/, "");
+  const THEMES = [["sage", "Sage", ["#7D8F6E", "#B39566", "#F7F4EE"]], ["oldmoney", "Old Money", ["#5D6B3B", "#7A2434", "#F3EDE2"]], ["bordeaux", "Bordeaux", ["#7A2434", "#B08A57", "#F6EFE6"]],
+                  ["terracotta", "Terracotta", ["#B5583A", "#6F7442", "#F6EEE3"]], ["midnight", "Midnight", ["#121927", "#C9A96E", "#1F2A44"]], ["dustyblue", "Dusty Blue", ["#6F8FAF", "#BC9C74", "#F3F5F7"]]];
+  const $ = (id) => document.getElementById(id);
+  let theme = "sage";
+  THEMES.forEach(([id, label, cols]) => { const b = document.createElement("button"); b.type = "button"; b.dataset.t = id; b.innerHTML = `<i>${cols.map((c) => `<b style="background:${c}"></b>`).join("")}</i>${label}`;
+    b.onclick = () => { theme = id; [...$("themes").children].forEach((x) => x.setAttribute("aria-pressed", x.dataset.t === theme)); update(); }; $("themes").appendChild(b); });
+  $("themes").firstChild.setAttribute("aria-pressed", "true");
+  const tzs = (Intl.supportedValuesOf ? Intl.supportedValuesOf("timeZone") : ["Europe/Paris", "Europe/London", "America/New_York", "America/Los_Angeles", "Africa/Casablanca"]);
+  const here = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  tzs.forEach((z) => { const o = document.createElement("option"); o.value = o.textContent = z; if (z === "Europe/Paris") o.selected = true; $("tz").appendChild(o); });
+  const url = (page, p) => { const u = new URL(BASE + page); Object.entries(p).forEach(([k, v]) => { if (v !== "" && v != null && v !== false) u.searchParams.set(k, v); }); return u.toString(); };
+  function common() { return { theme, lang: $("lang").value }; }
+  function rsvpParams(extra = {}) {
+    return { ...common(), api: $("api").value.trim(), meals: $("meals").value.split("|").map((s) => s.trim()).filter(Boolean).join("|"), max: $("max").value,
+      deadline: $("deadline").value, tz: $("tz").value, contact: $("contact").value.trim(), shuttle: $("shuttle").checked ? 1 : "", song: $("song").checked ? 1 : "", phone: $("phone").checked ? 1 : "", ...extra };
+  }
+  function update() {
+    const dt = `${$("date").value}T${$("time").value || "16:00"}`; const title = `${$("n1").value} & ${$("n2").value} — Wedding`;
+    const links = {
+      countdown: url("countdown.html", { ...common(), date: dt, tz: $("tz").value }),
+      calendar: url("calendar.html", { ...common(), start: dt, tz: $("tz").value, title, loc: $("loc").value }),
+      rsvp: url("rsvp.html", rsvpParams()),
+      music: url("music.html", { ...common(), ...( $("music").value === "custom" ? { src: $("musicsrc").value.trim() } : { track: "romance" }), title: `${$("n1").value} & ${$("n2").value}` }),
+    };
+    for (const k in links) { $("o-" + k).value = links[k]; const f = $("p-" + k); if (f.src !== links[k]) f.src = links[k]; }
+  }
+  document.querySelectorAll("input,select").forEach((el) => el.addEventListener("change", update));
+  $("music").addEventListener("change", () => { $("musicsrc").hidden = $("music").value !== "custom"; });
+  document.addEventListener("click", (e) => { const b = e.target.closest("[data-copy]"); if (!b) return; navigator.clipboard.writeText($(b.dataset.copy).value); const t = b.textContent; b.textContent = "Copied ✓"; setTimeout(() => (b.textContent = t), 1500); });
+  let rows = [];
+  function makeLinks() {
+    rows = $("list").value.split("\n").map((l) => l.trim()).filter(Boolean).map((line) => { const p = line.split(line.includes("\t") ? "\t" : ";").map((s) => s.trim());
+      const to = p[0] || "", max = parseInt(p[1], 10) || 1, names = (p[2] || "").split("|").map((s) => s.trim()).filter(Boolean);
+      return { to, max, names, link: url("rsvp.html", rsvpParams({ to, guests: max, names: names.join("|") })) }; });
+    const tb = $("links").querySelector("tbody"); tb.innerHTML = ""; $("links").hidden = !rows.length;
+    rows.forEach((r, i) => { const tr = document.createElement("tr"); tr.innerHTML = `<td><b></b><br><small></small></td><td><div class="l"></div><button class="btn ghost" style="margin-top:6px" data-i="${i}">Copy</button></td><td><div class="qr" id="qr${i}"></div></td>`;
+      tr.querySelector("b").textContent = r.to; tr.querySelector("small").textContent = `${r.max} guest(s)`; tr.querySelector(".l").textContent = r.link; tb.appendChild(tr);
+      if (window.QRCode) new QRCode($("qr" + i), { text: r.link, width: 84, height: 84, correctLevel: QRCode.CorrectLevel.L }); });
+  }
+  $("mk").onclick = makeLinks;
+  $("links").addEventListener("click", (e) => { const b = e.target.closest("[data-i]"); if (b) { navigator.clipboard.writeText(rows[+b.dataset.i].link); b.textContent = "Copied ✓"; } });
+  $("csv").onclick = () => { if (!rows.length) makeLinks(); const csv = [["household", "max_guests", "names", "rsvp_link"], ...rows.map((r) => [r.to, r.max, r.names.join(" | "), r.link])].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "personal-rsvp-links.csv"; a.click(); };
+  update(); makeLinks();
+</script>
+</body></html>
