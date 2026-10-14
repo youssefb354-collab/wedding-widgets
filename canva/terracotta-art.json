@@ -1,0 +1,178 @@
+[
+ {
+  "page": 1,
+  "label": "Welcome",
+  "art": [
+   {
+    "kind": "corner",
+    "left": -20,
+    "top": -20,
+    "width": 430,
+    "height": null,
+    "rotation": 0
+   },
+   {
+    "kind": "corner",
+    "left": 956,
+    "top": 358,
+    "width": 430,
+    "height": null,
+    "rotation": 180
+   },
+   {
+    "kind": "envelope",
+    "left": 443,
+    "top": 228,
+    "width": 480,
+    "height": null,
+    "rotation": 0
+   }
+  ]
+ },
+ {
+  "page": 2,
+  "label": "Our Day",
+  "art": [
+   {
+    "kind": "corner",
+    "left": -30,
+    "top": 498,
+    "width": 300,
+    "height": null,
+    "rotation": 270
+   }
+  ]
+ },
+ {
+  "page": 3,
+  "label": "Save the Date",
+  "art": [
+   {
+    "kind": "swag",
+    "left": 533,
+    "top": 140,
+    "width": 300,
+    "height": null,
+    "rotation": 0
+   }
+  ]
+ },
+ {
+  "page": 4,
+  "label": "Our Story",
+  "art": []
+ },
+ {
+  "page": 5,
+  "label": "The Day",
+  "art": [
+   {
+    "kind": "swag",
+    "left": 533,
+    "top": 168,
+    "width": 300,
+    "height": null,
+    "rotation": 0
+   }
+  ]
+ },
+ {
+  "page": 6,
+  "label": "The Venue",
+  "art": []
+ },
+ {
+  "page": 7,
+  "label": "Travel & Stay",
+  "art": []
+ },
+ {
+  "page": 8,
+  "label": "Dress Code",
+  "art": [
+   {
+    "kind": "corner",
+    "left": -20,
+    "top": -20,
+    "width": 380,
+    "height": null,
+    "rotation": 0
+   },
+   {
+    "kind": "corner",
+    "left": 1006,
+    "top": 408,
+    "width": 380,
+    "height": null,
+    "rotation": 180
+   },
+   {
+    "kind": "swag",
+    "left": 533,
+    "top": 150,
+    "width": 300,
+    "height": null,
+    "rotation": 0
+   }
+  ]
+ },
+ {
+  "page": 9,
+  "label": "Moments",
+  "art": []
+ },
+ {
+  "page": 10,
+  "label": "Gifts",
+  "art": []
+ },
+ {
+  "page": 11,
+  "label": "Questions",
+  "art": []
+ },
+ {
+  "page": 12,
+  "label": "RSVP",
+  "art": [
+   {
+    "kind": "corner",
+    "left": -20,
+    "top": -20,
+    "width": 400,
+    "height": null,
+    "rotation": 0
+   },
+   {
+    "kind": "corner",
+    "left": 986,
+    "top": 388,
+    "width": 400,
+    "height": null,
+    "rotation": 180
+   }
+  ]
+ },
+ {
+  "page": 13,
+  "label": "Thank You",
+  "art": [
+   {
+    "kind": "swag",
+    "left": 433,
+    "top": 50,
+    "width": 500,
+    "height": null,
+    "rotation": 0
+   },
+   {
+    "kind": "swag",
+    "left": 433,
+    "top": 540,
+    "width": 500,
+    "height": null,
+    "rotation": 0
+   }
+  ]
+ }
+]
